@@ -1,4 +1,5 @@
 const axios = require('axios');
+var jwt = require('jsonwebtoken');
 const setup = {
     cart:{
         URL:process.env.CART_APP_URL
@@ -37,12 +38,24 @@ const setConfig = ({app,token})=>{
     axiosObj.defaults.baseURL = setup[app]['URL'];
 }
 
+const setJwt = ()=>{
+    let token = jwt.sign({
+        data: { role:'isc', firstName:'isc',
+            lastName: 'isc', emailId: 'isc',
+            userId:'-1'
+        }
+    }, 'secret', { expiresIn: '1h' });
+    console.log("generated token",token);
+    return 'Bearer '+token;
+}
+
 module.exports =   {
     setBearerToken,
     getRequest,
     postRequest,
     putRequest,
-    setConfig
+    setConfig,
+    setJwt
 }
 
 

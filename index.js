@@ -1,31 +1,30 @@
 const express = require('express')
 const app = express();
 var bodyParser = require('body-parser');
+const http = require('http');
 app.use(bodyParser.json());
-require('dotenv').config();
-const port = 4004;
+require('./config/index')();
+
 const hostname = 'localhost';
-const controllers = require('./controllers');
+const msgApp = require('./routes.js');
 app.get('/', function (req, res) {
   res.send('Hello World');
-})
+});
 
-app.post('/send', controllers.sendToQueue);
-app.post('/receive', controllers.consumeFromQueue);
-
-app.post('/push-order', controllers.sendToQueue);
-app.post('/receive-order', controllers.consumeFromQueue);
-
-app.get('/getWishmasters',controllers.getConsumers);
-app.post('/createOrder',controllers.createOrder);
-
-app.post('/ack',controllers.ack);
-app.post('/ackmsg',controllers.ackMsg);
+app.use('/api/message', msgApp);
 
 
 
+app.use(function(req,res){
+  res.status(404).json({msg:'Resource Not Found'});
+});
+
+const port = 4004;
+http.createServer(app).listen(port,()=>{
+    console.log(`Cart is listening at ${port}`);
+});
 
 //listen for request on port 3000, and as a callback function have the port listened on logged
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+// app.listen(port, hostname, () => {
+//   console.log(`Server running at http://${hostname}:${port}/`);
+// });

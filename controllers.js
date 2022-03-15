@@ -55,6 +55,9 @@ let cosumeFunc = async (msg, name) => {
             console.log("Delivery tag updated details are",resAfterAssign);
 
             //nack the message and send back to queue
+        }else if(resAfterAssign.updated == 0){
+                console.log("came inside else if ");
+                channel.nack(msg);
         }
         //channel.ack(msg);
         console.log("order assigned",resAfterAssign)
